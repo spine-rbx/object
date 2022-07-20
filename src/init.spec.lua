@@ -2,7 +2,6 @@ return function()
 	local Object = require(script.Parent)
 
 	describe("classes", function()
-		
 		it("should make a valid instance", function()
 			expect(Object:New()).to.be.ok()
 		end)
@@ -21,11 +20,9 @@ return function()
 			expect(smallClass.a).to.equal(1)
 			expect(smallClass.hello).to.equal("world")
 		end)
-
 	end)
 
 	describe("instances", function()
-	
 		it("should inherit values", function()
 			local class = Object:Extend()
 			class.a = 1
@@ -47,7 +44,6 @@ return function()
 
 			expect(instance.hello).to.equal("hello")
 		end)
-
 	end)
 
 	describe("constructors", function()
@@ -68,6 +64,52 @@ return function()
 				expect(value[i] > lastTime).to.equal(true)
 				lastTime = value[i]
 			end
+		end)
+	end)
+
+	describe(":Is", function()
+		it("should return true for instances", function()
+			local class = Object:Extend()
+			local instance = class:New()
+
+			expect(class:Is(instance)).to.equal(true)
+		end)
+
+		it("should return false for non-instances", function()
+			local class = Object:Extend()
+
+			expect(class:Is(class)).to.equal(false)
+			expect(class:Is(nil)).to.equal(false)
+			expect(class:Is(true)).to.equal(false)
+			expect(class:Is(false)).to.equal(false)
+			expect(class:Is(0)).to.equal(false)
+			expect(class:Is(1)).to.equal(false)
+			expect(class:Is("")).to.equal(false)
+			expect(class:Is({})).to.equal(false)
+			expect(class:Is(function() end)).to.equal(false)
+		end)
+
+		it("should return true for subclasses", function()
+			local class = Object:Extend()
+			local subclass = class:Extend()
+
+			expect(class:Is(subclass)).to.equal(true)
+		end)
+
+		it("should return false for subclass instances", function()
+			local class = Object:Extend()
+			local subclass = class:Extend()
+			local instance = subclass:New()
+
+			expect(class:Is(instance)).to.equal(false)
+		end)
+
+		it("should return true for subclass instances when recursive is true", function()
+			local class = Object:Extend()
+			local subclass = class:Extend()
+			local instance = subclass:New()
+
+			expect(class:Is(instance, true)).to.equal(true)
 		end)
 	end)
 end
